@@ -16,6 +16,7 @@ const doLogin = () =>
 
 const AppProvider = (props) => {
 
+    
     const [cookies, setCookie, removeCookie] = useCookies(["token"]);
 
 
@@ -34,8 +35,8 @@ const AppProvider = (props) => {
         }
     }
 
-  
-console.log(cookies)
+  console.log("cooke")
+console.log(cookies);
 
     //guarda VALOR en la cookie NOMBRE por una hora
     const guardarCookie = (nombre, valor) => {
@@ -75,9 +76,10 @@ console.log(cookies)
             setState(initial_state);
         }
         else if (
-            console.log("soy null")
+
             params.usuario == null
         ) {
+            console.log("soy null")
             doLogin();
         }
         else { //Obtener usuario de URL y registrar cookie
@@ -209,4 +211,9 @@ console.log(cookies)
                 }
             </AppContext.Provider>
         </div>
-    
+    );
+
+}
+
+export default AppProvider;
+export const AppContext = React.createContext();

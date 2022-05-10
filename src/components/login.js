@@ -10,11 +10,14 @@ import axios from 'axios';
 
 
 const obtenerDatosPorUt = (ut) => {
+  console.log("soy ut")
+  console.log(ut)
   let datosPorUt = {
 
     ci:"48964228",
     Nombres:"Emiliano",
     PrimerApellido:"Rialan",
+
   };
 
   ut={
@@ -95,4 +98,4 @@ const Login = () => {
     return null;
 }
  
-export default Login
+export default Login;
