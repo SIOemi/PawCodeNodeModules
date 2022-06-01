@@ -8,6 +8,7 @@ import { Box, Button, Hidden, Fab, Tooltip} from '@material-ui/core';
 import RefreshOutlinedIcon from '@material-ui/icons/RefreshOutlined';
 import { makeStyles, withStyles} from '@material-ui/core/styles';
 import Titulo from '../layout/titulo';
+
 //import axios from 'axios';
 import dateFormat, { masks } from "dateformat";
 import ResumenIncidencias from './resumenIncidencias';
@@ -117,6 +118,7 @@ const ListaDiscos = (props) => {
 
         const procesarDT = (members) => {
             var discos_trabajos = {}; //(key, value) = (id DU padre, DT)
+
             members.map(e => {
                 if (e.tipo === "DT" && e.status !== "DESASIGNADO") {
                     var dt = {};
@@ -129,6 +131,7 @@ const ListaDiscos = (props) => {
                     dt.nombre = obtenerNombrePersona(e.jefetrabajo, e.person, false);
                     dt.nombreCompleto = obtenerNombrePersona(e.jefetrabajo, e.person, true);
                     dt.estado = e.status ? convertirEstado(e.status) : "";
+
                     dt.historico = [];
                     if (!discos_trabajos[e.padre]) discos_trabajos[e.padre] = [];
                     discos_trabajos[e.padre].push(dt);
@@ -458,10 +461,6 @@ const ListaDiscos = (props) => {
                 })
 
         }
-
-
-
-
     }
 
 
@@ -533,7 +532,6 @@ const ListaDiscos = (props) => {
             })
             .catch(error => {
                 setIncidencias([]);
-                
                 setErrorAlCargar(true);
                 setLoading(false);
                 alert("Error al cargar los discos con numero " + numero + ": " + error)
@@ -660,6 +658,7 @@ const ListaDiscos = (props) => {
         serviciosGEMA.get(url)
             .then(response => {
                 members = response.data.member;
+                console.log(members);
                 if (members.length !== 0) {
                     //obtengo los id de los DU y cargo los DT
                     var ids_du = members.map(e => e.utd_nardisdiscoid);
@@ -667,6 +666,7 @@ const ListaDiscos = (props) => {
                     serviciosGEMA.get(url)
                         .then(response => {
                             members = members.concat(response.data.member);
+                          //  console.log(members);
                             procesarMembers(members, props.soloActivos ? "ACTIVOS" : "TODOS", null);
                         })
                         .catch(error => {
@@ -951,10 +951,7 @@ const ListaDiscos = (props) => {
 
     return (
 
-        
-
         <div>
-
            
                 {(props.soloActivos || props.todos) && <Titulo titulo={titulo} subtitulo={subtitulo}/>}
                 {props.soloActivos && !loading && <BarraSuperiorActivos setFiltro={setFiltro} filtro={filtro} vistaCelular={props.vistaCelular} />}
@@ -1000,7 +997,6 @@ const ListaDiscos = (props) => {
                                     >
                                         Actualizar {diferenciaFechas}
                                     </Button>
-
                                 </Box>
                                 :
                                 <Box display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center">
@@ -1015,7 +1011,6 @@ const ListaDiscos = (props) => {
                                 </Box>
 
                             }
-
 
                             <Box display="flex" flexDirection="column">   
                                 {/*props.soloActivos && resumen*/}

@@ -139,6 +139,7 @@ const DiscoUnidad = (props) => {
             />
             : null
         : <DiscoUnidadHeader
+        
             {...props}
             vistaCelular={vistaCelular}
             resaltarPorFechaBusqueda={resaltarPorFechaBusqueda}
@@ -177,7 +178,7 @@ const DiscoUnidad = (props) => {
 
             {/*Celular*/}
             <Hidden smUp>
-                {header(true)}
+                {header(true) +  "dasdsadsad"}
                 <Box display="flex" flexWrap="wrap">
                     {discosDeTrabajo}
                 </Box>
@@ -185,6 +186,7 @@ const DiscoUnidad = (props) => {
 
             {/*PC*/}
             <Hidden xsDown>
+                
                 {vistaHorizontal
                     ? <div>
                         {header(false)}

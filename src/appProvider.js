@@ -7,6 +7,7 @@ import unidades from './datos/unidades.json';
 import { Typography, Box } from '@material-ui/core';
 
 import axios from 'axios';
+import { ConsoleView } from 'react-device-detect';
 
 const CONFIG = window.data;
 
@@ -35,8 +36,8 @@ const AppProvider = (props) => {
         }
     }
 
-  console.log("cooke")
-console.log(cookies);
+//   console.log("cooke")
+// console.log(cookies);
 
     //guarda VALOR en la cookie NOMBRE por una hora
     const guardarCookie = (nombre, valor) => {
@@ -79,11 +80,12 @@ console.log(cookies);
 
             params.usuario == null
         ) {
-            console.log("soy null")
+           // console.log("soy null")
             doLogin();
         }
         else { //Obtener usuario de URL y registrar cookie
 
+            console.log("otro else")
 
             let data = decode(params.usuario).split("|", 4); // obtengo datos de la url
 
@@ -119,8 +121,6 @@ console.log(cookies);
             //Guardo la UNIDAD data[2]
 
             let unidad = data[2];
-            console.log("estoy 118 en appprovider")
-            console.log(unidad);
             var unidadDesc = unidades.filter(u => u.id === unidad);
             console.log(unidadDesc);
             unidadDesc = !unidad || unidad === ""
@@ -156,6 +156,7 @@ console.log(cookies);
                     else if (unidadDesc === "")
                         throw 'Usuario sin unidad asignada';
 
+                        console.log(res.data)
                     let token = res.data.split('<?xml version="1.0"')[0];
                     let data = JSON.parse(token);
 
@@ -170,7 +171,6 @@ console.log(cookies);
                     guardarCookie("cargaFinalizada", true);
                     guardarCookie("error", unidadDesc === "" || perfilDesc === "");
                     setState(initial_state);
-
 
                 })
                 .catch(error => { alert("No se pudieron cargar los datos del usuario.\n" + error); });

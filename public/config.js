@@ -1,4 +1,4 @@
-entorno = "Pre" //"Test" - "Pre" - "Prod"
+entorno = "Test" //"Test" - "Pre" - "Prod"
 version = "1.0.0"
 
 
