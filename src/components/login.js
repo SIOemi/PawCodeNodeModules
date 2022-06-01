@@ -8,21 +8,8 @@ import { AppContext } from '../appProvider';
 
 import axios from 'axios';
 
-
 const obtenerDatosPorUt = (ut) => {
-  console.log("soy ut")
-  console.log(ut)
-  let datosPorUt = {
 
-    ci:"48964228",
-    Nombres:"Emiliano",
-    PrimerApellido:"Rialan",
-
-  };
-
-  ut={
-    
-  }
   let xmls="<soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'>\
     <soap:Body>\
       <ObtenerPersonaSAPPorUT xmlns='http://tempuri.org/'>\
@@ -52,8 +39,7 @@ function doLogin(){
 
 const Login = () => {
     const [state, setState] = React.useContext(AppContext);
-    console.log("estoy en 52 login")
-    console.log(state);
+    
     //cookie con token que contienen usuario encriptado
     const[cookies, setCookie, removeCookie] = useCookies(["token"]);
     let usuario = "";
@@ -82,11 +68,11 @@ const Login = () => {
       else {
         let datosPorUt = obtenerDatosPorUt(usuario);
         let nombre = datosPorUt.nombre;
-        console.log(nombre);
+       // console.log(nombre);
         
         newState = { 
           ...state, 
-          ci: "20158776", //datosPorUt.ci
+          ci: datosPorUt.ci, //datosPorUt.ci
           nombre: datosPorUt.nombre,
           ut: usuario,
           logged: true

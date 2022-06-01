@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
@@ -7,11 +8,12 @@ import PermIdentityOutlinedIcon from '@material-ui/icons/PermIdentityOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import LaunchOutlinedIcon from '@material-ui/icons/LaunchOutlined';
 import { AppContext } from '../../appProvider';
-import {obtenerNombrePersona, formatearNombre, formatDate} from '../../utils/utils';
+import { obtenerNombrePersona, formatearNombre, formatDate } from '../../utils/utils';
 import SendToMobileOutlinedIcon from '@mui/icons-material/SendToMobileOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import HelpIcon from '@mui/icons-material/Help';
+
 
 import { serviciosGEMA } from '../../servicios/servicios';
 
@@ -22,18 +24,20 @@ import {
     Typography,
     Button,
     Box,
-    SwipeableDrawer, 
+    SwipeableDrawer,
     Tooltip
 } from '@material-ui/core';
+import Incidencia from '../incidencia/incidencia';
+import { ManOutlined } from '@mui/icons-material';
 
 
 const BlackTooltip = withStyles({
     tooltip: {
-      color: "white",
-      backgroundColor: "black",
-      fontSize: 16
+        color: "white",
+        backgroundColor: "black",
+        fontSize: 16
     }
-  })(Tooltip);
+})(Tooltip);
 
 
 const useStyles = makeStyles((theme) => ({
@@ -63,9 +67,9 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: 300,
     },
     boxEstado: {
-        margin: 20, 
-        marginBottom: 0, 
-        padding: 10, 
+        margin: 20,
+        marginBottom: 0,
+        padding: 10,
         borderRadius: 10,
         backgroundColor: "#cebcbc2b"
     },
@@ -75,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
         padding: 10,
         backgroundColor: "#706d6d24",
         borderLeft: "3px solid #767676",
-        "&:hover": {cursor: 'pointer'}
+        "&:hover": { cursor: 'pointer' }
     },
     unidad: {
         backgroundColor: "#ededed",
@@ -95,10 +99,10 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 50
     },
     discoSustituidoBox: {
-        backgroundColor: "white", 
-        padding: 5, 
-        borderRadius: 10, 
-        width: 80, 
+        backgroundColor: "white",
+        padding: 5,
+        borderRadius: 10,
+        width: 80,
         borderWidth: 1,
         borderColor: "#6a6868",
         borderStyle: "solid"
@@ -125,7 +129,7 @@ export default function ConsultaDiscoUnidad(props) {
 
         var datos = [];
         var estadoAnterior = "";
-
+        console.log(historico);
         historico.map(e => {
             var row = {};
             row.rowId = e._rowstamp;
@@ -147,11 +151,10 @@ export default function ConsultaDiscoUnidad(props) {
             if (estado === "RETIRADO") estado = "Retirado en SIO";
             if (estado === "EXTRAVIADO") estado = "Sustituido por extravío";
             if (estado === "FIRMADO") estado = "Firmado";
+            //aca debo cambiar si el estado es sustituido deberia de ser 
             estadoAnterior = estado;
 
             row.estado = estado;
-
-
 
             //jefe de trabajos
             row.jefeDeTrabajos = obtenerNombrePersona(e.jefetrabajo, e.person, true);
@@ -174,7 +177,6 @@ export default function ConsultaDiscoUnidad(props) {
             datos[i].jefeDeTrabajos = (datos[i].estado === "Disponible en PAW" || datos[i].estado === "Colocado en SIO" || datos[i].estado === "Retirado en SIO")
                 ? "---"
                 : datos[i + 1].jefeDeTrabajos;
-
 
         //el último JT es el actual
         var estado = datos[datos.length - 1].estado;
@@ -214,16 +216,26 @@ export default function ConsultaDiscoUnidad(props) {
                 e.desc = "Disco retirado en SIO"
             else if (estadoAnterior === "Solicitud de firma" && e.estado === "Disponible en PAW")
                 e.desc = "Cancelación de solicitud de firma"
-            else if (e.estado==="Sustituido por extravío")
-                e.desc="Se coloca un nuevo disco"
+            // aca habria que colocar otra descripcion para que diga Incidencia sustituida por tal 
+            //lo que vendria a ser el cambio que solicitan el de cambio de incidencia en discos
+            // else if(e.estado === "")
+            // e.desc = "Disco viene de la incidencia anterior" + numero de incidencia    
+            else if (e.estado === "Sustituido por extravío")
+                e.desc = "Se coloca un nuevo disco"
             estadoAnterior = e.estado;
-
         })
         return datos
     };
 
-
     var datos = [];
+
+
+    ///---------------COde EMi-------------
+    console.log("soy props");
+    console.log(props);
+    //-----------------------------------
+
+
     React.useEffect(() => {
         if (props.open) {
             setLoading(true);
@@ -247,96 +259,150 @@ export default function ConsultaDiscoUnidad(props) {
     const [state,] = React.useContext(AppContext);
 
     const CONFIG = window.data;
- 
+
+    // -----------------COde EMi------------------
+    let ob = {
+        accionEncontingencia: false,
+        comentario: "Disco creado",
+        desc: 'Disco de incidencia ' + 4553522 + ' fue sustituido por la incidencia ' + props.incidencia ,
+        discoSustituido: false,
+        estado: "Incidencia sustituida",
+        fecha: "26 may 2022   15:34",
+        jefeDeTrabajos: "---",
+        mostrarJefeDeTrabajos: false,
+        rowId: "2720238178",
+        usuario: "48964228",
+        incidencia: props.incidencia,
+    }
+    let sumoUno = 0;
+
+    rows.map(row => {
+        // esIgual(row.rowId)
+        console.log(ob.rowId);
+        console.log(row.rowId);
+        console.log("soy el lenght " + rows.length);
+        ob.rowId != row.rowId ? sumoUno = sumoUno + 1 : null
+        /* eslint-disable-line */
+
+        sumoUno == rows.length ? rows.push(ob) : null
+        /* eslint-disable-line */
+
+        // if (ob.rowId != row.rowId) {
+        //     sumoUno = sumoUno + 1;
+        // }
+        // if (sumoUno == rows.length) {
+        //     rows.push(ob);
+        // }
+    }
+    )
+
+    console.log("estoy en row")
+    console.log(rows)
+// -----------------COde EMi------------------
+
+
     const panel = (
-        <div style={{maxWidth: 400}}>
-              <AppBar className={classes.appBar} color="transparent" elevation={0}>
-                        <Toolbar style={{ minHeight: 90 }}>
-                            <IconButton edge="start" color="inherit" onClick={props.handleClose} aria-label="close" style={{ marginRight: 10 }}>
-                                <CloseIcon />
-                            </IconButton>
-                            <Box display="flex" flexDirection="row" alignItems="center">
-                                <img
-                                    style={{ height: 50 }}
-                                    alt=""
-                                    src={(!props.finalizado)
-                                        ? "/PAW/assets/images/unidadIcon.svg"
-                                        : "/PAW/assets/images/unidadGrisIcon.svg"}
-                                />
-                                <Box display="flex" flexDirection="column" className={classes.title}>
-                                    <Typography variant="h6">
-                                        {props.numero}
-                                    </Typography>
-                                    <span className={classes.unidad}>{unidad}</span>
-                                </Box>
-                            </Box>
+        <div style={{ maxWidth: 400 }}>
+            <AppBar className={classes.appBar} color="transparent" elevation={0}>
 
-                        </Toolbar>
-                    </AppBar>
-          
-                    <Box display="flex" flexDirection="column" style={{ margin: 20, marginBottom: 0, marginTop: 5, padding: 10 }}>
-                            <Typography variant="body1">
-                                {props.ubicacion}
+                <Toolbar style={{ minHeight: 90 }}>
+                    <IconButton edge="start" color="inherit" onClick={props.handleClose} aria-label="close" style={{ marginRight: 10 }}>
+                        <CloseIcon />
+                        {/* icono de la foto dell disco */}
+                    </IconButton>
+
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                        {/* icono de la foto dell disco */}
+                        <img
+
+                            style={{ height: 50 }}
+                            alt=""
+                            src={(!props.finalizado)
+                                ? "/PAW/assets/images/unidadIcon.svg"
+                                : "/PAW/assets/images/unidadGrisIcon.svg"}
+                        />
+
+                        <Box display="flex" flexDirection="column" className={classes.title}>
+                            <Typography variant="h6">
+                                {props.numero}
+                                {/* numero de disco */}
                             </Typography>
-                          {
-                                !state.operadorCMD &&
-                                <Box display="flex" flexDirection="row" alignItems="left" style={{marginTop: 5}} >
-                                <a  href={CONFIG.localizar_GOOGLE(props.latitud,props.longitud)} 
-                                    target="_blank" 
-                                    style={{ textDecoration: 'none' }}>
-                                    <Button  variant='contained' color="secondary" endIcon={<LaunchOutlinedIcon />}>
-                                        Google Maps
-                                    </Button>
-                                </a>
-                                <a  href={CONFIG.localizar_EGEO(props.latitud,props.longitud)} 
-                                    target="_blank" 
-                                    style={{ textDecoration: 'none' }}>
-                                    <Button  variant='contained' color="secondary" endIcon={<LaunchOutlinedIcon />} style={{ marginLeft: 10 }}>
-                                        EGEO WEB
-                                    </Button>
 
-                                </a>
-                                
-                            </Box> 
-                          }
-                           
-
+                            <span className={classes.unidad}>{unidad}</span>
                         </Box>
-           
-         
-                {!loading ?
+                    </Box>
+
+                </Toolbar>
+            </AppBar>
+
+            <Box display="flex" flexDirection="column" style={{ margin: 20, marginBottom: 0, marginTop: 5, padding: 10 }}>
+                <Typography variant="body1">
+                    {props.ubicacion}
+                </Typography>
+
+                {
+                    !state.operadorCMD &&
+                    <Box display="flex" flexDirection="row" alignItems="left" style={{ marginTop: 5 }} >
+
+                        <a href={CONFIG.localizar_GOOGLE(props.latitud, props.longitud)}
+                            target="_blank"
+                            style={{ textDecoration: 'none' }}>
+                            <Button variant='contained' color="secondary" endIcon={<LaunchOutlinedIcon />}>
+                                Google Maps
+                            </Button>
+                        </a>
+
+                        <a href={CONFIG.localizar_EGEO(props.latitud, props.longitud)}
+                            target="_blank"
+                            style={{ textDecoration: 'none' }}>
+                            <Button variant='contained' color="secondary" endIcon={<LaunchOutlinedIcon />} style={{ marginLeft: 10 }}>
+                                EGEO WEB
+                            </Button>
+
+                        </a>
+
+                    </Box>
+                }
+
+
+            </Box>
+
+
+            {
+                !loading ?
 
                     rows.map((row) => (
+
                         <Box display="flex" flexDirection="column" className={classes.boxEstado}>
-                            <Box display="flex" flexDirection="row" justifyContent="space-between"  style={{ marginBottom: 15 }} flex="1">
-                                   
-                                   
-                                   <Typography variant="body1" style={{width: 190}}>
+                            <Box display="flex" flexDirection="row" justifyContent="space-between" style={{ marginBottom: 15 }} flex="1">
+
+
+                                <Typography variant="body1" style={{ width: 190 }}>
                                     <BlackTooltip title={row.desc} placement="left">
                                         <span >
-                                            
-                                                <b >{row.estado} </b> 
-                                                <HelpIcon style={{width: 17, margin: 1, color:"gray", verticalAlign: "bottom"}} />
-                                            
+
+                                            <b >{row.estado}</b>
+                                            <HelpIcon style={{ width: 17, margin: 1, color: "gray", verticalAlign: "bottom" }} />
+
                                         </span>
-                                    </BlackTooltip>    <br/>
-                                   {"por " + row.usuario}
-                                    </Typography>
-                                    
+                                    </BlackTooltip>    <br />
+                                    {"por " + row.usuario}
+                                </Typography>
 
-                                   <Typography variant="body1" align="right">
-                                           {row.fecha}<br/>
-                                           {row.accionEncontingencia && 
-                                              <Box display="flex" flexDirection="row"justifyContent="center"  style={{backgroundColor: "#d5d5d5", padding: 3, borderRadius: 5}}>
-                                                   <span style={{fontWeight: 500}}>{(row.comentario.slice(14)==="Otros" || row.comentario.slice(14)==="") ? "Contingencia" : row.comentario.slice(14)}</span>
-                                                   <SecurityOutlinedIcon style={{width: 17, marginLeft: 5}}/>                                               
-                                               </Box>
-                                           }
-                                   </Typography>
-                                           
-                               </Box>
 
-                            {row.mostrarJefeDeTrabajos && 
+                                <Typography variant="body1" align="right">
+                                    {row.fecha}<br />
+                                    {row.accionEncontingencia &&
+                                        <Box display="flex" flexDirection="row" justifyContent="center" style={{ backgroundColor: "#d5d5d5", padding: 3, borderRadius: 5 }}>
+                                            <span style={{ fontWeight: 500 }}>{(row.comentario.slice(14) === "Otros" || row.comentario.slice(14) === "") ? "Contingencia" : row.comentario.slice(14)}</span>
+                                            <SecurityOutlinedIcon style={{ width: 17, marginLeft: 5 }} />
+                                        </Box>
+                                    }
+                                </Typography>
+
+                            </Box>
+
+                            {row.mostrarJefeDeTrabajos &&
                                 <Box display="flex" flexDirection="row" alignItems="center">
                                     <PersonOutlinedIcon />
                                     <Typography variant="body1" style={{ marginLeft: 10 }}>
@@ -346,23 +412,26 @@ export default function ConsultaDiscoUnidad(props) {
                             }
 
 
+
+
                             {row.discoSustituido &&
                                 <Box display="flex" flexDirection="row" justifyContent="space-evenly">
+
                                     <Box display="flex" flexDirection="row" alignItems="center">
-                                        <Typography variant="body1" style={{ borderStyle: "dashed" }} align ="center" className={classes.discoSustituidoBox}>
-                                            <b>Extraviado </b><br /> 
-                                            {row.comentario.slice(14).split(", realizado")[0].split(" ")[1]} 
+                                        <Typography variant="body1" style={{ borderStyle: "dashed" }} align="center" className={classes.discoSustituidoBox}>
+                                            <b>Extraviado </b><br />
+                                            {row.comentario.slice(14).split(", realizado")[0].split(" ")[1]}
                                         </Typography>
-                                    
-                                        <ArrowForwardOutlinedIcon style={{ margin: 10 }}/>
-                                        
-                                        <Typography variant="body1" align ="center" className={classes.discoSustituidoBox} >
+
+                                        <ArrowForwardOutlinedIcon style={{ margin: 10 }} />
+
+                                        <Typography variant="body1" align="center" className={classes.discoSustituidoBox} >
                                             <b>Nuevo </b><br />
-                                            {row.comentario.slice(14).split(", realizado")[0].split(" ")[4]} 
+                                            {row.comentario.slice(14).split(", realizado")[0].split(" ")[4]}
                                         </Typography>
                                     </Box>
-                                </Box>             
-                                }
+                                </Box>
+                            }
 
                         </Box>
 
@@ -374,19 +443,39 @@ export default function ConsultaDiscoUnidad(props) {
                         <img alt="cargando-icon" src="/PAW/assets/images/loading.gif" width="60px" />
                         <Typography variant="subtitle1" color="initial">Cargando actividades</Typography>
                     </Box>
-                }
-                <Box style={{ marginBottom: 20, height: 20 }}> </Box>
+            }
+            {/* -----------cambio preventivo para imprimir foto ----------------- */}
+            {/* {
+                <Box display="flex" flexDirection="column" className={classes.boxEstado}>
+                    <Box display="flex" flexDirection="row" justifyContent="space-between" style={{ marginBottom: 15 }} flex="1">
+                        <Typography variant="body1" style={{ width: 190 }}>
+                            <BlackTooltip title={"aaa"} placement="left">
+                                <span >
 
-            </div>
+                                    <b >Sustitución</b>
+                                    <HelpIcon style={{ width: 17, margin: 1, color: "gray", verticalAlign: "bottom" }} />
+
+                                </span>
+                            </BlackTooltip>    <br />
+                            {"por "}
+                        </Typography>
+                    </Box>
+                </Box>
+
+            } */}
+            {/* --------------cambio preventivo para imprimir foto -------------- */}
+            <Box style={{ marginBottom: 20, height: 20 }}> </Box>
+
+        </div>
     )
 
-    return ( 
+    return (
         props.open &&
         <SwipeableDrawer
             anchor={'right'}
             open={props.open}
             onClose={props.handleClose}
-            >
+        >
             {panel}
         </SwipeableDrawer>
     )

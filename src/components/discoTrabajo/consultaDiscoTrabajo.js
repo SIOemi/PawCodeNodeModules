@@ -104,6 +104,8 @@ const BlackTooltip = withStyles({
 
 const CONFIG = window.data;
 
+console.log(CONFIG)
+
 
 
 const crearHistorico = (historico, jefeDeTrabajosActual, nominado) => {
@@ -111,6 +113,10 @@ const crearHistorico = (historico, jefeDeTrabajosActual, nominado) => {
     var datos = [];
 
     var estadoAnterior = null;
+
+console.log(historico);
+console.log(jefeDeTrabajosActual);
+console.log({nominado});
 
     historico.map(e => {
         var row = {};
@@ -187,6 +193,7 @@ const crearHistorico = (historico, jefeDeTrabajosActual, nominado) => {
 
         //fecha
         var fecha = formatDate(e.changedate)
+        console.log(fecha);
         row.fecha = fecha.d + " " + fecha.m + " " + fecha.y + "   " + fecha.hh + ":" + (fecha.mm < 10 ? '0' : '') + fecha.mm;
 
 
